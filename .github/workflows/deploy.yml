@@ -1,9 +1,9 @@
-name: Deploy to Production Server
+name: Deploy to Production Server (Clean Copy)
 
 on:
   push:
     branches:
-      - main   # jis branch se deploy karna hai
+      - main
 
 jobs:
   deploy:
@@ -13,13 +13,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy to Server via SSH
+      - name: Deploy Fresh Code to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "."
+          target: "/home/ubuntu/Ervaar-Anders"
+          rm: true   # 🔥 deletes old files before copying
+
+      - name: Reload Nginx
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /home/ubuntu/Ervaar-Anders
-            git pull origin main
             sudo systemctl reload nginx
