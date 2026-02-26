@@ -20,6 +20,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /var/www/html
-            sudo git pull origin main
+            cd /home/ubuntu/Ervaar-Anders
+            git pull origin main
             sudo systemctl reload nginx
